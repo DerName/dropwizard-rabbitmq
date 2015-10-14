@@ -12,12 +12,12 @@ import java.util.function.Function;
 public abstract class RabbitMqBundle<C extends Configuration> implements ConfiguredBundle<C> {
 
     private final String name;
-    private final Function<C, ConsumerConfiguration> consumerConfiguration;
+    private final Function<C, ConnectionConfiguration> consumerConfiguration;
     private final Function<C, ConnectionFactory> connectionFactory;
 
     public RabbitMqBundle(String name,
                           Function<C, ConnectionFactory> connectionFactory,
-                          Function<C, ConsumerConfiguration> consumerConfiguration) {
+                          Function<C, ConnectionConfiguration> consumerConfiguration) {
         this.name = name;
         this.consumerConfiguration = consumerConfiguration;
         this.connectionFactory = connectionFactory;
@@ -29,7 +29,7 @@ public abstract class RabbitMqBundle<C extends Configuration> implements Configu
 
     @Override
     public void run(C configuration, Environment environment) throws Exception {
-        ConsumerConfiguration consumerConfiguration = this.consumerConfiguration.apply(configuration);
+        ConnectionConfiguration consumerConfiguration = this.consumerConfiguration.apply(configuration);
         ExecutorService executorService = environment.lifecycle()
                 .executorService(name + "-consumer-thread-pool")
                 .maxThreads(consumerConfiguration.getNumThreads())

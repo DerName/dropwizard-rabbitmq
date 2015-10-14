@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.Min;
 
-public class ConsumerConfiguration {
+public class ConnectionConfiguration {
 
     @Min(1)
     private int numThreads = 1;
