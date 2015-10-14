@@ -9,7 +9,7 @@ import com.rabbitmq.client.Consumer;
 /**
  * Internal use.
  */
-class ChannelMetrics {
+class ChannelMetrics implements MetricsListener {
 
     private final Meter deliveryMeter;
     private final Meter ackMeter;
@@ -40,6 +40,7 @@ class ChannelMetrics {
     /**
      * Call before delivered.
      */
+    @Override
     public void delivered(){
         deliveryMeter.mark();
     }
@@ -47,18 +48,22 @@ class ChannelMetrics {
     /**
      * Call after ack
      */
+    @Override
     public void acked(){
         ackMeter.mark();
     }
 
+    @Override
     public void nacked(){
         nackMeter.mark();
     }
 
+    @Override
     public void rejected(){
         rejectMeter.mark();
     }
 
+    @Override
     public void published(){
         publishMeter.mark();
     }
