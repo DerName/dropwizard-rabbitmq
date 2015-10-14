@@ -26,7 +26,7 @@ public class IndexConsumerBundle implements ConfiguredBundle<IndexJobServiceConf
     public void run(IndexJobServiceConfiguration configuration, Environment environment) throws Exception {
         final ExecutorService deliveryExecutor = environment.lifecycle()
                 .executorService("index-consumer-delivery-thread-pool").maxThreads(10).build();
-        configuration.getRabbitMq().buildAsync(environment, deliveryExecutor, "index-consumer", this::connected);
+        configuration.getRabbitMq().buildRetryInitialConnect(environment, deliveryExecutor, "index-consumer", this::connected);
     }
 
     public void connected(Connection connection) throws Exception {

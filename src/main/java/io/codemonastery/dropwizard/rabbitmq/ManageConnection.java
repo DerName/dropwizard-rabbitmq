@@ -3,10 +3,14 @@ package io.codemonastery.dropwizard.rabbitmq;
 
 import com.rabbitmq.client.Connection;
 import io.dropwizard.lifecycle.Managed;
+import io.dropwizard.setup.Environment;
 
 import java.util.function.Supplier;
 
-public class ManageConnection implements Managed {
+/**
+ * Internal use. Stops connection if ever opened. Plugin to {@link Environment#lifecycle()}.
+ */
+class ManageConnection implements Managed {
 
     private final Supplier<Connection> connection;
 

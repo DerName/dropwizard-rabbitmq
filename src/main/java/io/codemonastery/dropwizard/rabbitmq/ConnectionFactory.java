@@ -11,6 +11,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Supplier;
 
+/**
+ * For documentation about these configurations, see {@link com.rabbitmq.client.ConnectionFactory)}.
+ * 
+ * Note that automaticRecoveryEnabled and topologyRecoveryEnabled are not exposed because they are assumed to be true.
+ */
 public class ConnectionFactory {
 
     private String username;
@@ -187,10 +192,18 @@ public class ConnectionFactory {
         return connection;
     }
 
-    public void buildAsync(final Environment env,
-                           final ExecutorService deliveryExecutor,
-                           final String name,
-                           final ConnectedCallback callback) throws Exception {
+    /**
+     * Asynchronously connect to rabbitmq, and retry until successful
+     * @param env dropwizard environment
+     * @param deliveryExecutor the executor used by rabbitmq client to deliver messages
+     * @param name name of rabbitmq connection
+     * @param callback callback when done - which may be after application start
+     * @throws Exception
+     */
+    public void buildRetryInitialConnect(final Environment env,
+                                         final ExecutorService deliveryExecutor,
+                                         final String name,
+                                         final ConnectedCallback callback) throws Exception {
         final com.rabbitmq.client.ConnectionFactory connectionFactory = makeConnectionFactory();
         final ScheduledExecutorService initialConnectExecutor = env.lifecycle()
                 .scheduledExecutorService(name + "-initial-connect-thread")

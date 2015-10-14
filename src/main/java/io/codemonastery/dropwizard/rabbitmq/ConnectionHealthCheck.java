@@ -7,7 +7,10 @@ import com.rabbitmq.client.Connection;
 import java.io.IOException;
 import java.util.function.Supplier;
 
-public class ConnectionHealthCheck extends HealthCheck {
+/**
+ * Internal use. 
+ */
+class ConnectionHealthCheck extends HealthCheck {
     
     private final Supplier<Connection> connection;
 

@@ -8,7 +8,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class ConnectAsync implements Runnable {
+/**
+ * Internal use.
+ */
+class ConnectAsync implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConnectAsync.class);
 
