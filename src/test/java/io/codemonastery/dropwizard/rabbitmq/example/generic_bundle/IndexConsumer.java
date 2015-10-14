@@ -20,6 +20,8 @@ public class IndexConsumer extends DefaultConsumer {
 
     @Override
     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+        //channels are meant for use within one thread
+        //so we can use the consumers channel to publish
         getChannel().basicPublish("job_status", "index", true, PROPS, "STARTED".getBytes());
         try {
             //fake index work
