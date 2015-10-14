@@ -14,9 +14,6 @@ public class IndexJobServiceConfiguration extends Configuration {
     @NotNull
     private ConnectionFactory rabbitMq = new ConnectionFactory();
     
-    @Valid
-    @NotNull
-    private ConnectionConfiguration blahConsumer = new ConnectionConfiguration();
 
     @JsonProperty
     public ConnectionFactory getRabbitMq() {
@@ -26,15 +23,5 @@ public class IndexJobServiceConfiguration extends Configuration {
     @JsonProperty
     public void setRabbitMq(ConnectionFactory rabbitMq) {
         this.rabbitMq = rabbitMq;
-    }
-
-    @JsonProperty
-    public ConnectionConfiguration getBlahConsumer() {
-        return blahConsumer;
-    }
-
-    @JsonProperty
-    public void setBlahConsumer(ConnectionConfiguration blahConsumer) {
-        this.blahConsumer = blahConsumer;
     }
 }

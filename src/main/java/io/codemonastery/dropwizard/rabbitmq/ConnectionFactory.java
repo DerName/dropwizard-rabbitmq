@@ -10,20 +10,28 @@ import java.util.function.Supplier;
 /**
  * For documentation about these configurations, see {@link com.rabbitmq.client.ConnectionFactory)}.
  * 
- * Registers a health check, manages the rabbitmq connection. Does not handle metrics.
+ * Registers a health check, manages the rabbitmq connection, and adds metrics.
  * 
  * Note that automaticRecoveryEnabled and topologyRecoveryEnabled are not exposed because they are assumed to be true.
  */
 public class ConnectionFactory extends ConnectionConfiguration {
-    
-    // will cause application to fail to called in run and cannot connect
+
+    /**
+     * Synchronously connect to rabbitmq, will cause application to fail if initial connection is unsuccessful.
+     * @param env dropwizard environment
+     * @param deliveryExecutor
+     * @param name name of rabbitmq connection
+     * @return connection
+     * @throws Exception
+     */
     public Connection build(final Environment env,
-                            final ExecutorService consumerExecutorService,
+                            final ExecutorService deliveryExecutor,
                             final String name) throws Exception {
         final com.rabbitmq.client.ConnectionFactory connectionFactory = makeConnectionFactory();
-        final Connection connection = connectionFactory.newConnection(consumerExecutorService);
+        final ChannelMetrics channelMetrics = new ChannelMetrics(name, env.metrics());
+        final Connection connection = connectionFactory.newConnection(deliveryExecutor);
         registerWithEnvironment(env, name, () -> connection);
-        return connection;
+        return channelMetrics.wrap(connection);
     }
 
     /**
@@ -43,7 +51,12 @@ public class ConnectionFactory extends ConnectionConfiguration {
                 .scheduledExecutorService(name + "-initial-connect-thread")
                 .threads(1)
                 .build();
-        final ConnectAsync connectAsync = new ConnectAsync(connectionFactory, deliveryExecutor, name, initialConnectExecutor, callback);
+        final ChannelMetrics channelMetrics = new ChannelMetrics(name, env.metrics());
+        final ConnectedCallback callbackWithMetrics = connection -> {
+            final Connection metricsConnection = channelMetrics.wrap(connection);
+            callback.connected(metricsConnection);
+        };
+        final ConnectAsync connectAsync = new ConnectAsync(connectionFactory, deliveryExecutor, name, initialConnectExecutor, callbackWithMetrics);
         registerWithEnvironment(env, name, connectAsync::getConnection);
         connectAsync.run();
     }

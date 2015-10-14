@@ -45,7 +45,7 @@ public class IndexConsumerBundle implements ConfiguredBundle<IndexJobServiceConf
 
     private void setupIndexJobQueue(Channel channel) throws IOException {
         channel.exchangeDeclare("job", "topic", true);
-        channel.queueDeclare("index", true, false, false, new HashMap<>());
+        channel.queueDeclare("index_job", true, false, false, new HashMap<>());
         channel.queueBind("index_job", "job", "index");
     }
 }

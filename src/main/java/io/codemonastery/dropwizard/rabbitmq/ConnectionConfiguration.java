@@ -88,7 +88,7 @@ public class ConnectionConfiguration {
     }
 
     @JsonProperty
-    public void setPort(int port) {
+    public void setPort(Integer port) {
         this.port = port;
     }
 
@@ -98,7 +98,7 @@ public class ConnectionConfiguration {
     }
 
     @JsonProperty
-    public void setRequestedChannelMax(int requestedChannelMax) {
+    public void setRequestedChannelMax(Integer requestedChannelMax) {
         this.requestedChannelMax = requestedChannelMax;
     }
 
@@ -108,7 +108,7 @@ public class ConnectionConfiguration {
     }
 
     @JsonProperty
-    public void setRequestedFrameMax(int requestedFrameMax) {
+    public void setRequestedFrameMax(Integer requestedFrameMax) {
         this.requestedFrameMax = requestedFrameMax;
     }
 
@@ -118,7 +118,7 @@ public class ConnectionConfiguration {
     }
 
     @JsonProperty
-    public void setRequestedHeartbeat(int requestedHeartbeat) {
+    public void setRequestedHeartbeat(Integer requestedHeartbeat) {
         this.requestedHeartbeat = requestedHeartbeat;
     }
 
@@ -128,7 +128,7 @@ public class ConnectionConfiguration {
     }
 
     @JsonProperty
-    public void setConnectionTimeout(int connectionTimeout) {
+    public void setConnectionTimeout(Integer connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
 
@@ -138,7 +138,7 @@ public class ConnectionConfiguration {
     }
 
     @JsonProperty
-    public void setHandshakeTimeout(int handshakeTimeout) {
+    public void setHandshakeTimeout(Integer handshakeTimeout) {
         this.handshakeTimeout = handshakeTimeout;
     }
 
@@ -148,7 +148,7 @@ public class ConnectionConfiguration {
     }
 
     @JsonProperty
-    public void setShutdownTimeout(int shutdownTimeout) {
+    public void setShutdownTimeout(Integer shutdownTimeout) {
         this.shutdownTimeout = shutdownTimeout;
     }
 
