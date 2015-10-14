@@ -189,7 +189,7 @@ public class ConnectionFactory {
     }
 
     public void buildAsync(final Environment env,
-                           final ExecutorService consumerExecutorService,
+                           final ExecutorService deliveryExecutor,
                            final String name,
                            final ConnectedCallback callback) throws Exception {
         final ScheduledExecutorService initialConnectExecutor = env.lifecycle()
@@ -197,7 +197,7 @@ public class ConnectionFactory {
                 .threads(1)
                 .build();
         final com.rabbitmq.client.ConnectionFactory connectionFactory = makeConnectionFactory();
-        final ConnectAsync connectAsync = new ConnectAsync(connectionFactory, consumerExecutorService, name, initialConnectExecutor, callback);
+        final ConnectAsync connectAsync = new ConnectAsync(connectionFactory, deliveryExecutor, name, initialConnectExecutor, callback);
         env.healthChecks().register(name, new ConnectionHealthCheck(connectAsync::getConnection));
         env.lifecycle().manage(new ManageConnection(connectAsync::getConnection));
         connectAsync.run();
