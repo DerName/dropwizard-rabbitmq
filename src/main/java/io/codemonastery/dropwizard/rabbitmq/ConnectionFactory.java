@@ -9,6 +9,7 @@ import javax.validation.constraints.Min;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.Supplier;
 
 public class ConnectionFactory {
 
@@ -176,15 +177,13 @@ public class ConnectionFactory {
         this.networkRecoveryInterval = networkRecoveryInterval;
     }
 
-    // will cause application to fail to called in run
+    // will cause application to fail to called in run and cannot connect
     public Connection build(final Environment env,
                             final ExecutorService consumerExecutorService,
                             final String name) throws Exception {
         final com.rabbitmq.client.ConnectionFactory connectionFactory = makeConnectionFactory();
-
         final Connection connection = connectionFactory.newConnection(consumerExecutorService);
-        env.healthChecks().register(name, new ConnectionHealthCheck(() -> connection));
-        env.lifecycle().manage(new ManageConnection(() -> connection));
+        registerWithEnvironment(env, name, () -> connection);
         return connection;
     }
 
@@ -192,15 +191,19 @@ public class ConnectionFactory {
                            final ExecutorService deliveryExecutor,
                            final String name,
                            final ConnectedCallback callback) throws Exception {
+        final com.rabbitmq.client.ConnectionFactory connectionFactory = makeConnectionFactory();
         final ScheduledExecutorService initialConnectExecutor = env.lifecycle()
                 .scheduledExecutorService(name + "-initial-connect-thread")
                 .threads(1)
                 .build();
-        final com.rabbitmq.client.ConnectionFactory connectionFactory = makeConnectionFactory();
         final ConnectAsync connectAsync = new ConnectAsync(connectionFactory, deliveryExecutor, name, initialConnectExecutor, callback);
-        env.healthChecks().register(name, new ConnectionHealthCheck(connectAsync::getConnection));
-        env.lifecycle().manage(new ManageConnection(connectAsync::getConnection));
+        registerWithEnvironment(env, name, connectAsync::getConnection);
         connectAsync.run();
+    }
+    
+    private void registerWithEnvironment(final Environment env, final String name, final Supplier<Connection> connection){
+        env.healthChecks().register(name, new ConnectionHealthCheck(connection));
+        env.lifecycle().manage(new ManageConnection(connection));
     }
 
     private com.rabbitmq.client.ConnectionFactory makeConnectionFactory() {
