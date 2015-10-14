@@ -14,6 +14,8 @@ import java.util.function.Supplier;
 /**
  * For documentation about these configurations, see {@link com.rabbitmq.client.ConnectionFactory)}.
  * 
+ * Registers a health check, manages the rabbitmq connection. Does not handle metrics.
+ * 
  * Note that automaticRecoveryEnabled and topologyRecoveryEnabled are not exposed because they are assumed to be true.
  */
 public class ConnectionFactory {
