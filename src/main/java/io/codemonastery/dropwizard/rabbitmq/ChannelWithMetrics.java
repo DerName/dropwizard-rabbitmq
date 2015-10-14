@@ -9,11 +9,11 @@ import java.util.concurrent.TimeoutException;
 class ChannelWithMetrics implements Channel {
     
     private final Channel delegate;
-    private final ChannelMetrics channelMetrics;
+    private final WrappedConnectionMetrics connectionMetrics;
 
-    public ChannelWithMetrics(Channel delegate, ChannelMetrics channelMetrics) {
+    public ChannelWithMetrics(Channel delegate, WrappedConnectionMetrics connectionMetrics) {
         this.delegate = delegate;
-        this.channelMetrics = channelMetrics;
+        this.connectionMetrics = connectionMetrics;
     }
 
     @Override
@@ -124,19 +124,19 @@ class ChannelWithMetrics implements Channel {
     @Override
     public void basicPublish(String exchange, String routingKey, AMQP.BasicProperties props, byte[] body) throws IOException {
         delegate.basicPublish(exchange, routingKey, props, body);
-        channelMetrics.published();
+        connectionMetrics.published();
     }
 
     @Override
     public void basicPublish(String exchange, String routingKey, boolean mandatory, AMQP.BasicProperties props, byte[] body) throws IOException {
         delegate.basicPublish(exchange, routingKey, mandatory, props, body);
-        channelMetrics.published();
+        connectionMetrics.published();
     }
 
     @Override
     public void basicPublish(String exchange, String routingKey, boolean mandatory, boolean immediate, AMQP.BasicProperties props, byte[] body) throws IOException {
         delegate.basicPublish(exchange, routingKey, mandatory, immediate, props, body);
-        channelMetrics.published();
+        connectionMetrics.published();
     }
 
     @Override
@@ -281,51 +281,51 @@ class ChannelWithMetrics implements Channel {
 
     @Override
     public GetResponse basicGet(String queue, boolean autoAck) throws IOException {
-        channelMetrics.delivered();
+        connectionMetrics.delivered();
         return delegate.basicGet(queue, autoAck);
     }
 
     @Override
     public void basicAck(long deliveryTag, boolean multiple) throws IOException {
         delegate.basicAck(deliveryTag, multiple);
-        channelMetrics.acked();
+        connectionMetrics.acked();
     }
 
     @Override
     public void basicNack(long deliveryTag, boolean multiple, boolean requeue) throws IOException {
         delegate.basicNack(deliveryTag, multiple, requeue);
-        channelMetrics.nacked();
+        connectionMetrics.nacked();
     }
 
     @Override
     public void basicReject(long deliveryTag, boolean requeue) throws IOException {
         delegate.basicReject(deliveryTag, requeue);
-        channelMetrics.rejected();
+        connectionMetrics.rejected();
     }
 
     @Override
     public String basicConsume(String queue, Consumer callback) throws IOException {
-        return delegate.basicConsume(queue, channelMetrics.wrap(callback));
+        return delegate.basicConsume(queue, connectionMetrics.wrap(callback));
     }
 
     @Override
     public String basicConsume(String queue, boolean autoAck, Consumer callback) throws IOException {
-        return delegate.basicConsume(queue, autoAck, channelMetrics.wrap(callback));
+        return delegate.basicConsume(queue, autoAck, connectionMetrics.wrap(callback));
     }
 
     @Override
     public String basicConsume(String queue, boolean autoAck, Map<String, Object> arguments, Consumer callback) throws IOException {
-        return delegate.basicConsume(queue, autoAck, arguments, channelMetrics.wrap(callback));
+        return delegate.basicConsume(queue, autoAck, arguments, connectionMetrics.wrap(callback));
     }
 
     @Override
     public String basicConsume(String queue, boolean autoAck, String consumerTag, Consumer callback) throws IOException {
-        return delegate.basicConsume(queue, autoAck, consumerTag, channelMetrics.wrap(callback));
+        return delegate.basicConsume(queue, autoAck, consumerTag, connectionMetrics.wrap(callback));
     }
 
     @Override
     public String basicConsume(String queue, boolean autoAck, String consumerTag, boolean noLocal, boolean exclusive, Map<String, Object> arguments, Consumer callback) throws IOException {
-        return delegate.basicConsume(queue, autoAck, consumerTag, noLocal, exclusive, arguments, channelMetrics.wrap(callback));
+        return delegate.basicConsume(queue, autoAck, consumerTag, noLocal, exclusive, arguments, connectionMetrics.wrap(callback));
     }
 
     @Override

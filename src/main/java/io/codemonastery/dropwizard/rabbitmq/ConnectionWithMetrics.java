@@ -9,11 +9,11 @@ import java.util.Map;
 class ConnectionWithMetrics implements Connection{
     
     private final Connection delegate;
-    private final ChannelMetrics channelMetrics;
+    private final WrappedConnectionMetrics connectionMetrics;
 
-    ConnectionWithMetrics(Connection delegate, ChannelMetrics channelMetrics) {
+    ConnectionWithMetrics(Connection delegate, WrappedConnectionMetrics connectionMetrics) {
         this.delegate = delegate;
-        this.channelMetrics = channelMetrics;
+        this.connectionMetrics = connectionMetrics;
     }
 
     @Override
@@ -53,12 +53,12 @@ class ConnectionWithMetrics implements Connection{
 
     @Override
     public Channel createChannel() throws IOException {
-        return channelMetrics.wrap(delegate.createChannel());
+        return connectionMetrics.wrap(delegate.createChannel());
     }
 
     @Override
     public Channel createChannel(int channelNumber) throws IOException {
-        return channelMetrics.wrap(delegate.createChannel(channelNumber));
+        return connectionMetrics.wrap(delegate.createChannel(channelNumber));
     }
 
     @Override

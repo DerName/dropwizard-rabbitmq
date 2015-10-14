@@ -10,11 +10,11 @@ import java.io.IOException;
 public class ConsumerWithMetrics implements Consumer {
     
     private final Consumer delegate;
-    private final ChannelMetrics channelMetrics;
+    private final WrappedConnectionMetrics connectionMetrics;
 
-    public ConsumerWithMetrics(Consumer delegate, ChannelMetrics channelMetrics) {
+    public ConsumerWithMetrics(Consumer delegate, WrappedConnectionMetrics connectionMetrics) {
         this.delegate = delegate;
-        this.channelMetrics = channelMetrics;
+        this.connectionMetrics = connectionMetrics;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ConsumerWithMetrics implements Consumer {
 
     @Override
     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-        channelMetrics.delivered();
+        connectionMetrics.delivered();
         delegate.handleDelivery(consumerTag, envelope, properties, body);
     }
 }
