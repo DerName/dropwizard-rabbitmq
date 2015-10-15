@@ -4,9 +4,9 @@ Dropwizard RabbitMQ
 
 Rabbitmq configuration, metrics, health-checks and lifecycle management integrated with dropwizard, focused on common use cases. Inspired by dropwizard-core and [dropwizard-extra](//github.com/datasift/dropwizard-extra). 
 
-Usage
+Simple Usage
 -----
-**Dangerous** Application will fail to start if RabbitMQ initial connection attempt does not succeed.
+Easy to use, but if initial connection fails no retry will be performed.
 ``` java
 final ExecutorService deliveryExecutor = environment.lifecycle()
         .executorService("index-consumer-delivery-thread-pool")
@@ -20,7 +20,7 @@ final Connection connection = configuration.getRabbitMq()
 
 Better Usage
 ------------
-This usage will retry the initial connection, calling the callback when it suceeds. The RabbitMQ connection class has reconnect/topology recreate features which are turned on by default in this library, which is why we only need to rety initial connect.
+Will retry the initial connection, asynchronously calling the callback when it succeeds. The RabbitMQ connection class has reconnect/topology recreate features which are turned on by default in this library, which is why we only need to retry initial connect.
 ```
 final ExecutorService deliveryExecutor = environment.lifecycle()
         .executorService("index-consumer-delivery-thread-pool")

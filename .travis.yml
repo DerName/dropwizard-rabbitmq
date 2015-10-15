@@ -1,0 +1,15 @@
+language: java
+jdk:
+  - oraclejdk8
+branches:
+  only:
+    - master
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+install: ./gradlew assemble
+script: ./gradle build
