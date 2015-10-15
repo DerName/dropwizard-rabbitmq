@@ -23,7 +23,7 @@ final Connection connection = configuration.getRabbitMq()
 Better Usage
 ------------
 Will retry the initial connection, asynchronously calling the callback when it succeeds. The RabbitMQ connection class has reconnect/topology recreate features which are turned on by default in this library, which is why we only need to retry initial connect.
-```
+``` java
 final ExecutorService deliveryExecutor = environment.lifecycle()
     .executorService("index-consumer-delivery-thread-pool")
     .maxThreads(configuration.getNumIndexingThreads())
