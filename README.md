@@ -2,7 +2,7 @@ Dropwizard RabbitMQ
 ===================
 *Why doesn't this exist already...*
 
-A [dropwizard-extra](//github.com/datasift/dropwizard-extra) inspired library to integrate rabbitmq with dropwizard configuration, metrics, health-checks and lifecycle.
+Rabbitmq configuration, metrics, health-checks and lifecycle management integrated with dropwizard, focused on common use cases. Inspired by dropwizard-core and [dropwizard-extra](//github.com/datasift/dropwizard-extra). 
 
 Usage
 -----
