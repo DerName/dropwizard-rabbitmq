@@ -2,10 +2,11 @@ plugins {
     id 'java'
     id 'maven'
     id 'signing'
+//    id 'io.codearte.nexus-staging'
 }
 
 group 'io.codemonastery'
-version 'develop-SNAPSHOT'
+version '0.0.1'
 
 task wrapper(type: Wrapper) {
   gradleVersion = '2.7'
@@ -22,7 +23,7 @@ dependencies {
     compile group: 'io.dropwizard', name: 'dropwizard-core', version: '0.8.4'
     compile group: 'com.rabbitmq', name:'amqp-client', version: '3.5.6'
     testCompile group: 'junit', name: 'junit', version: '4.11'
-}
+}   
 
 task javadocJar(type: Jar) {
     classifier = 'javadoc'
@@ -42,17 +43,25 @@ signing {
     sign configurations.archives
 }
 
+def getPropertyOrEmpty(propertyName){
+    if(project.hasProperty(propertyName)){
+        return project.getProperty(propertyName);
+    }
+    return "";
+}
+
+
 uploadArchives {
     repositories {
         mavenDeployer {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
             repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
+                authentication(userName: getPropertyOrEmpty("ossrhUser"), password: getPropertyOrEmpty("ossrhPassword"))
             }
 
             snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
+                authentication(userName: getPropertyOrEmpty("ossrhUser"), password: getPropertyOrEmpty("ossrhPassword"))
             }
 
             pom.project {

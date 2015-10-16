@@ -9,7 +9,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Supplier;
 
 /**
- * For documentation about these configurations, see {@link com.rabbitmq.client.ConnectionFactory)}.
+ * For documentation about these configurations, see {@link com.rabbitmq.client.ConnectionFactory}.
  * 
  * Registers a health check, manages the rabbitmq connection, and adds metrics.
  * 
@@ -27,7 +27,7 @@ public class ConnectionFactory extends ConnectionConfiguration {
     /**
      * Synchronously connect to rabbitmq, will cause application to fail if initial connection is unsuccessful.
      * @param env dropwizard environment
-     * @param deliveryExecutor
+     * @param deliveryExecutor executor
      * @param name name of rabbitmq connection
      * @return connection
      * @throws Exception

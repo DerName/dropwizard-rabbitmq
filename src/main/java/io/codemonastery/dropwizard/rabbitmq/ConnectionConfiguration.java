@@ -185,7 +185,7 @@ public class ConnectionConfiguration {
         final int defaultHeartbeat = Optional.fromNullable(getRequestedHeartbeat()).or(com.rabbitmq.client.ConnectionFactory.DEFAULT_HEARTBEAT);
         final int connectionTimeout = Optional.fromNullable(getConnectionTimeout()).or(com.rabbitmq.client.ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT);
         final int handshakeTimeout = Optional.fromNullable(getHandshakeTimeout()).or(com.rabbitmq.client.ConnectionFactory.DEFAULT_HANDSHAKE_TIMEOUT);
-        final int shutdownTimeout = Optional.fromNullable(getShutdownTimeout()).or(com.rabbitmq.client.ConnectionFactory.DEFAULT_SHUTDOWN_TIMEOUT);
+            final int shutdownTimeout = Optional.fromNullable(getShutdownTimeout()).or(com.rabbitmq.client.ConnectionFactory.DEFAULT_SHUTDOWN_TIMEOUT);
 
         connectionFactory.setUsername(username);
         connectionFactory.setPassword(password);
