@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'maven'
+    id 'signing'
 }
 
 group 'io.codemonastery'
@@ -20,4 +22,66 @@ dependencies {
     compile group: 'io.dropwizard', name: 'dropwizard-core', version: '0.8.4'
     compile group: 'com.rabbitmq', name:'amqp-client', version: '3.5.6'
     testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'Dropwizard RabbitMQ'
+                packaging 'jar'
+                description 'RabbitMQ integration for common uses in Dropwizard'
+                url 'https://github.com/code-monastery/dropwizard-rabbitmq'
+
+                scm {
+                    connection 'scm:git@github.com:code-monastery/dropwizard-rabbitmq.git'
+                    developerConnection 'scm:git@github.com:code-monastery/dropwizard-rabbitmq.git'
+                    url 'http://foo.googlecode.com/svn/trunk/'
+                }
+
+                licenses {
+                    license {
+                        name 'CC0 1.0 Universal'
+                        url 'https://creativecommons.org/publicdomain/zero/1.0/'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'randyp'
+                        name 'Randy Pensinger'
+                        email 'rspensinger@gmail.com'
+                    }
+                }
+            }
+        }
+    }
 }
