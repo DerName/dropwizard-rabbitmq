@@ -15,10 +15,6 @@ plugins {
 
 apply plugin: 'io.codearte.nexus-staging'
 
-def readVersion(){
-  return new File('VERSION').getText('UTF-8')
-}
-
 group 'io.codemonastery'
 version readVersion()
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
@@ -40,33 +36,24 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }   
 
+//custom tasks
 task javadocJar(type: Jar) {
     classifier = 'javadoc'
     from javadoc
 }
-
 task sourcesJar(type: Jar) {
     classifier = 'sources'
     from sourceSets.main.allSource
 }
 
+//configure plugins
 artifacts {
     archives javadocJar, sourcesJar
 }
-
 signing {
     required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
     sign configurations.archives
 }
-
-def getPropertyOrEmpty(propertyName){
-    if(project.hasProperty(propertyName)){
-        return project.getProperty(propertyName);
-    }
-    return "";
-}
-
-
 uploadArchives {
     repositories {
         mavenDeployer {
@@ -111,3 +98,14 @@ uploadArchives {
     }
 }
 
+//utility functions
+def getPropertyOrEmpty(propertyName){
+    if(project.hasProperty(propertyName)){
+        return project.getProperty(propertyName);
+    }
+    return "";
+}
+
+def readVersion(){
+    return new File('VERSION').getText('UTF-8')
+}
