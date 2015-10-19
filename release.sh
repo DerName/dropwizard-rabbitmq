@@ -30,14 +30,18 @@ git checkout -b release &> /dev/null
 echo "Setting Version"
 echo "${RELEASE_VERSION}" > VERSION
 git add VERSION &> /dev/null
-git commit -m "${RELEASE_VERSION}"
+git commit -m "${RELEASE_VERSION}" &> /dev/null
 
 echo "Creating tag"
 git tag -af "${TAG_NAME}" -m "${TAG_NAME}" origin/master &> /dev/null
-git push --force origin "${TAG_NAME}" 
+git push --force origin "${TAG_NAME}"  &> /dev/null
 
 echo "Building"
 ./gradlew build upload closeAndPromoteRepository
+
+echo "Cleaning up"
+git checkout master &> /dev/null
+git branch -d release &> /dev/null
 
 echo "Done"
 
