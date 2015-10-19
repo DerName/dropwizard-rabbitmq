@@ -1,11 +1,22 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
+    }
+}
+
 plugins {
     id 'java'
     id 'maven'
     id 'signing'
 }
 
+apply plugin: 'io.codearte.nexus-staging'
+
 group 'io.codemonastery'
-version '0.0.2-SNAPSHOT'
+version '0.0.3-SNAPSHOT'
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 task wrapper(type: Wrapper) {
