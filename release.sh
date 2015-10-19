@@ -20,10 +20,10 @@ if [ "${HAS_CHANGES}" ]; then
 fi
 
 echo "Fetching Code"
-git fetch &> /dev/null
+git fetch origin master &> /dev/null
 
 echo "Creating tag"
 git tag -af "${TAG_NAME}" -m "${TAG_NAME}" origin/master &> /dev/null
-git push --force "${TAG_NAME}" 
+git push --force origin "${TAG_NAME}" 
 #./gradlew build upload
 #./gradlew closeAndPromoteRepository
