@@ -14,6 +14,6 @@ if [ "$HAS_CHANGES" ]; then
 fi
 
 ## make a release branch to do work in
-git checkout master ; git pull ; git branch -D release 
+git fetch &> /dev/null
 #./gradlew build upload
 #./gradlew closeAndPromoteRepository
