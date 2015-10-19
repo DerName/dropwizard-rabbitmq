@@ -22,7 +22,7 @@ fi
 echo "Fetching Code"
 git fetch &> /dev/null
 
-echo "Creating tag
+echo "Creating tag"
 git tag -af "${TAG_NAME}" -m "${TAG_NAME}" origin/master &> /dev/null
 git push --force "${TAG_NAME}" 
 #./gradlew build upload
