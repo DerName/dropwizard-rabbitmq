@@ -15,8 +15,12 @@ plugins {
 
 apply plugin: 'io.codearte.nexus-staging'
 
+def readVersion(){
+  return new File('VERSION').getText('UTF-8')
+}
+
 group 'io.codemonastery'
-version '0.0.3-SNAPSHOT'
+version readVersion()
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 task wrapper(type: Wrapper) {

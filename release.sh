@@ -20,16 +20,24 @@ if [ "${HAS_CHANGES}" ]; then
 fi
 
 echo "Fetching Code"
-git fetch origin master &> /dev/null
+git checkout master &> /dev/null
+git pull origin master &> /dev/null
 
 echo "Creating Local Release Branch"
-git checkout origin/master &> /dev/null
 git branch -D release &> /dev/null
 git checkout -b release &> /dev/null
+
+echo "Setting Version"
+echo "${RELEASE_VERSION}" > VERSION
+git add VERSION &> /dev/null
+git commit -m "${RELEASE_VERSION}"
 
 echo "Creating tag"
 git tag -af "${TAG_NAME}" -m "${TAG_NAME}" origin/master &> /dev/null
 git push --force origin "${TAG_NAME}" 
 
-#./gradlew build upload
-#./gradlew closeAndPromoteRepository
+echo "Building"
+./gradlew build upload closeAndPromoteRepository
+
+echo "Done"
+
