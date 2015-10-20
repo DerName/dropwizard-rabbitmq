@@ -14,11 +14,14 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.when;
@@ -87,6 +90,24 @@ public class ConnectionFactoryTest {
                 }
             }
         } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+    }
+
+    @Test
+    public void synchronousStartFailure() throws Exception {
+        final ConnectionFactory connectionFactory = new ConnectionFactory();
+        connectionFactory.setHost("127.0.0.5");
+        connectionFactory.setConnectionTimeout(100);
+        Connection connection = null;
+        try {
+            connection = connectionFactory.build(environment, deliveryExecutor, "ConnectionFactoryTest");
+            fail("expected connection failure");
+        }catch (SocketTimeoutException e){
+            //expected
+        }finally {
             if (connection != null) {
                 connection.close();
             }
