@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -99,13 +100,13 @@ public class ConnectionFactoryTest {
     @Test
     public void synchronousStartFailure() throws Exception {
         final ConnectionFactory connectionFactory = new ConnectionFactory();
-        connectionFactory.setHost("127.1.2.3");
+        connectionFactory.setHost("NOT_A_REAL_NAME");
         connectionFactory.setConnectionTimeout(100);
         Connection connection = null;
         try {
             connection = connectionFactory.build(environment, deliveryExecutor, "ConnectionFactoryTest");
             fail("expected connection failure");
-        }catch (SocketTimeoutException e){
+        }catch (UnknownHostException e){
             //expected
         }finally {
             if (connection != null) {
