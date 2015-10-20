@@ -99,7 +99,7 @@ public class ConnectionFactoryTest {
     @Test
     public void synchronousStartFailure() throws Exception {
         final ConnectionFactory connectionFactory = new ConnectionFactory();
-        connectionFactory.setHost("127.0.0.5");
+        connectionFactory.setHost("127.1.2.3");
         connectionFactory.setConnectionTimeout(100);
         Connection connection = null;
         try {
