@@ -19,7 +19,7 @@ public class ConnectionFactory extends ConnectionConfiguration {
     
     private ConnectionMetrics metrics;
     
-    public ConnectionFactory metrics(ConnectionMetrics metrics){
+    public ConnectionFactory customeMetrics(ConnectionMetrics metrics){
         this.metrics = metrics;
         return this;
     }
