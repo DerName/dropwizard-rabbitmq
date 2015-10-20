@@ -4,7 +4,7 @@ jdk:
 branches:
   only:
     - master
-servicesL
+services:
   rabbitmq
   
 cache:
