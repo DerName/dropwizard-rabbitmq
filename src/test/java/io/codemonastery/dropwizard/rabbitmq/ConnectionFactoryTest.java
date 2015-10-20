@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
@@ -100,13 +101,13 @@ public class ConnectionFactoryTest {
     @Test
     public void synchronousStartFailure() throws Exception {
         final ConnectionFactory connectionFactory = new ConnectionFactory();
-        connectionFactory.setHost("NOT_A_REAL_NAME");
+        connectionFactory.setPort(5671);
         connectionFactory.setConnectionTimeout(100);
         Connection connection = null;
         try {
             connection = connectionFactory.build(environment, deliveryExecutor, "ConnectionFactoryTest");
             fail("expected connection failure");
-        }catch (UnknownHostException e){
+        }catch (ConnectException e){
             //expected
         }finally {
             if (connection != null) {
