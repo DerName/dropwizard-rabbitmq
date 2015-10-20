@@ -13,3 +13,4 @@ cache:
 sudo: false
 install: mvn -DskipTests=true -Dbasepom.check.skip-all=true -B install
 script: ./travis_script.sh
+
