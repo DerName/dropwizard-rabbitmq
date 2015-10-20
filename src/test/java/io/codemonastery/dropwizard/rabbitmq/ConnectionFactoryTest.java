@@ -6,6 +6,7 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import io.dropwizard.lifecycle.setup.ScheduledExecutorServiceBuilder;
 import io.dropwizard.setup.Environment;
 import org.junit.After;
 import org.junit.Before;
@@ -17,6 +18,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.when;
 
@@ -26,8 +29,11 @@ public class ConnectionFactoryTest {
     private ScheduledExecutorService connectExecutor;
 
     @Mock
-    private LifecycleEnvironment lifecycle;
+    private ScheduledExecutorServiceBuilder scheduledExecutorServiceBuilder;
     
+    @Mock
+    private LifecycleEnvironment lifecycle;
+
     @Mock
     private HealthCheckRegistry healthCheck;
 
@@ -44,7 +50,9 @@ public class ConnectionFactoryTest {
         when(environment.lifecycle()).thenReturn(lifecycle);
         when(environment.healthChecks()).thenReturn(healthCheck);
         when(environment.metrics()).thenReturn(metrics);
-        when(lifecycle.scheduledExecutorService(anyString())).thenAnswer(invocationOnMock -> {
+        when(lifecycle.scheduledExecutorService(anyString())).thenReturn(scheduledExecutorServiceBuilder);
+        when(scheduledExecutorServiceBuilder.threads(anyInt())).thenReturn(scheduledExecutorServiceBuilder);
+        when(scheduledExecutorServiceBuilder.build()).thenAnswer(invocationOnMock -> {
             if (connectExecutor != null) {
                 throw new AssertionError("Should not be called more than once per test");
             }
@@ -57,7 +65,7 @@ public class ConnectionFactoryTest {
     public void tearDown() throws Exception {
         deliveryExecutor.shutdownNow();
         deliveryExecutor = null;
-        if(connectExecutor != null){
+        if (connectExecutor != null) {
             connectExecutor.shutdownNow();
             connectExecutor = null;
         }
@@ -66,22 +74,41 @@ public class ConnectionFactoryTest {
     @Test
     public void synchronousStartAndDeclareQueue() throws Exception {
         Connection connection = null;
-        try{
+        try {
             connection = new ConnectionFactory().build(environment, deliveryExecutor, "ConnectionFactoryTest");
             Channel channel = null;
-            try{
+            try {
                 channel = connection.createChannel();
                 //noinspection unused
                 final AMQP.Queue.DeclareOk declareOk = channel.queueDeclare();
-            }finally {
-                if(channel != null){
+            } finally {
+                if (channel != null) {
                     channel.close();
                 }
             }
-        }finally {
-            if(connection != null){
+        } finally {
+            if (connection != null) {
                 connection.close();
             }
         }
+    }
+
+    @Test
+    public void asynchronousStartAndDeclareQueue() throws Exception {
+        boolean[] called = {false};
+        new ConnectionFactory().buildRetryInitialConnect(environment, deliveryExecutor, "ConnectionFactoryTest", connection -> {
+            Channel channel = null;
+            try {
+                channel = connection.createChannel();
+                //noinspection unused
+                final AMQP.Queue.DeclareOk declareOk = channel.queueDeclare();
+            } finally {
+                if (channel != null) {
+                    channel.close();
+                }
+            }
+            called[0] = true;
+        });
+        assertTrue(called[0]);
     }
 }
