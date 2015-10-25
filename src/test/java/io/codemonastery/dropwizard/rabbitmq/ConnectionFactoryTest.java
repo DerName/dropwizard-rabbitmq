@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyInt;
@@ -32,7 +33,7 @@ public class ConnectionFactoryTest {
 
     @Mock
     private ScheduledExecutorServiceBuilder scheduledExecutorServiceBuilder;
-    
+
     @Mock
     private LifecycleEnvironment lifecycle;
 
@@ -104,9 +105,9 @@ public class ConnectionFactoryTest {
         try {
             connection = connectionFactory.build(environment, deliveryExecutor, "ConnectionFactoryTest");
             fail("expected connection failure");
-        }catch (ConnectException e){
+        } catch (ConnectException e) {
             //expected
-        }finally {
+        } finally {
             if (connection != null) {
                 connection.close();
             }
@@ -130,5 +131,22 @@ public class ConnectionFactoryTest {
             called[0] = true;
         });
         assertTrue(called[0]);
+    }
+
+    @Test
+    public void asynchronousStartFailureWillRetry() throws Exception {
+        final ConnectionFactory connectionFactory = new ConnectionFactory();
+        connectionFactory.setPort(5671);
+        connectionFactory.setConnectionTimeout(10);
+
+        boolean[] called = {false};
+        connectionFactory.buildRetryInitialConnect(
+                environment,
+                deliveryExecutor,
+                "ConnectionFactoryTest",
+                connection -> called[0] = true
+        );
+        Thread.sleep(1000);
+        assertFalse(called[0]);
     }
 }
